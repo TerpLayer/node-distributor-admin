@@ -65,9 +65,119 @@ export default function BlacklistPage() {
     },
   });
 
+  // ── Blacklist execute ──
+  const [blType, setBlType] = useState<"token" | "address">("token");
+  const [blTarget, setBlTarget] = useState("");
+  const [blResult, setBlResult] = useState<{ msg: string; isError: boolean } | null>(null);
+  const [blStatus, setBlStatus] = useState<{ isBlacklisted: boolean } | null>(null);
+  const [blChecking, setBlChecking] = useState(false);
+
+  const checkStatus = async () => {
+    if (!blTarget.trim()) return;
+    setBlChecking(true);
+    setBlStatus(null);
+    try {
+      const res = await fetch(`/api/blacklist/status?type=${blType}&target=${encodeURIComponent(blTarget.trim())}`);
+      const data = await res.json();
+      if (res.ok) setBlStatus(data);
+      else setBlResult({ msg: data.error, isError: true });
+    } catch { setBlResult({ msg: "查询失败", isError: true }); }
+    setBlChecking(false);
+  };
+
+  const executeMutation = useMutation({
+    mutationFn: (blacklisted: boolean) =>
+      fetch("/api/blacklist/execute", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: blType, target: blTarget.trim(), blacklisted }),
+      }).then(async (r) => {
+        const data = await r.json();
+        if (!r.ok) throw new Error(data.error);
+        return data;
+      }),
+    onSuccess: (data) => {
+      setBlResult({ msg: `交易成功 (${data.txHash.slice(0, 14)}...)`, isError: false });
+      setBlStatus(null);
+      queryClient.invalidateQueries({ queryKey: ["blacklist-updates"] });
+      queryClient.invalidateQueries({ queryKey: ["metrics"] });
+    },
+    onError: (e: Error) => {
+      setBlResult({ msg: e.message, isError: true });
+    },
+  });
+
   return (
     <div className="space-y-8">
       <h2 className="text-2xl font-bold">黑名单管理</h2>
+
+      {/* Blacklist Execute */}
+      <section className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+        <h3 className="text-lg font-semibold mb-4">黑名单设置</h3>
+        <div className="flex flex-wrap items-end gap-4">
+          <div>
+            <label className="block text-xs text-gray-500 mb-1">类型</label>
+            <select
+              value={blType}
+              onChange={(e) => { setBlType(e.target.value as "token" | "address"); setBlStatus(null); setBlResult(null); }}
+              className="bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm"
+            >
+              <option value="token">商品 (Token ID)</option>
+              <option value="address">地址 (Wallet)</option>
+            </select>
+          </div>
+          <div className="flex-1 min-w-[240px]">
+            <label className="block text-xs text-gray-500 mb-1">
+              {blType === "token" ? "商品编号" : "钱包地址"}
+            </label>
+            <input
+              value={blTarget}
+              onChange={(e) => { setBlTarget(e.target.value); setBlStatus(null); setBlResult(null); }}
+              placeholder={blType === "token" ? "输入商品编号 (如: 0)" : "0x..."}
+              className="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm"
+            />
+          </div>
+          <button
+            onClick={checkStatus}
+            disabled={!blTarget.trim() || blChecking}
+            className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded text-sm disabled:opacity-50"
+          >
+            {blChecking ? "查询中..." : "查询状态"}
+          </button>
+        </div>
+
+        {blStatus && (
+          <div className="mt-4 flex items-center gap-4">
+            <span className="text-sm text-gray-400">
+              当前状态：
+              <span className={blStatus.isBlacklisted ? "text-red-400 font-medium" : "text-green-400 font-medium"}>
+                {blStatus.isBlacklisted ? "已列入黑名单" : "未列入黑名单"}
+              </span>
+            </span>
+            <button
+              onClick={() => executeMutation.mutate(!blStatus.isBlacklisted)}
+              disabled={executeMutation.isPending}
+              className={`px-4 py-2 rounded text-sm font-medium ${
+                blStatus.isBlacklisted
+                  ? "bg-green-600/20 text-green-400 hover:bg-green-600/30"
+                  : "bg-red-600/20 text-red-400 hover:bg-red-600/30"
+              } disabled:opacity-50`}
+            >
+              {executeMutation.isPending
+                ? "交易中..."
+                : blStatus.isBlacklisted
+                  ? "移出黑名单"
+                  : "加入黑名单"}
+            </button>
+          </div>
+        )}
+
+        {blResult && (
+          <p className={`mt-3 text-sm ${blResult.isError ? "text-red-400" : "text-green-400"}`}>
+            {blResult.msg}
+          </p>
+        )}
+      </section>
 
       {/* Flagged Transfers */}
       <section>
