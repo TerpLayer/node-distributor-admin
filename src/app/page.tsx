@@ -14,6 +14,15 @@ interface Metrics {
   blacklistedTokens: number;
   blacklistedAddresses: number;
   lastProcessedBlock: number;
+  // L1/V3 metrics
+  wholesaleVolume: string;
+  wholesaleRebates: string;
+  wholesaleHeldFunds: string;
+  l2Count: number;
+  costSettlementInitialCost: string;
+  costSettlementDistPool: string;
+  costSettlementFixedCost: string;
+  costSettlementSellerProfit: string;
 }
 
 export default function DashboardPage() {
@@ -25,7 +34,7 @@ export default function DashboardPage() {
   if (isLoading) return <div className="text-gray-500">加载中...</div>;
   if (!data) return <div className="text-red-400">加载失败</div>;
 
-  const cards = [
+  const retailCards = [
     { label: "总销售额", value: `${formatUSDC(data.totalSalesVolume)} USDC`, color: "text-green-400" },
     { label: "总佣金", value: `${formatUSDC(data.totalCommission)} USDC`, color: "text-blue-400" },
     { label: "活跃用户", value: data.activeUsers, color: "text-purple-400" },
@@ -38,17 +47,62 @@ export default function DashboardPage() {
     { label: "索引器区块", value: data.lastProcessedBlock.toLocaleString(), color: "text-gray-400" },
   ];
 
+  const wholesaleCards = [
+    { label: "批发总额", value: `${formatUSDC(data.wholesaleVolume)} USDC`, color: "text-green-400" },
+    { label: "返利总额", value: `${formatUSDC(data.wholesaleRebates)} USDC`, color: "text-emerald-400" },
+    { label: "持有资金", value: `${formatUSDC(data.wholesaleHeldFunds)} USDC`, color: "text-amber-400" },
+    { label: "L2 数量", value: data.l2Count, color: "text-indigo-400" },
+  ];
+
+  const costCards = [
+    { label: "初始成本", value: `${formatUSDC(data.costSettlementInitialCost)} USDC`, color: "text-sky-400" },
+    { label: "分销池", value: `${formatUSDC(data.costSettlementDistPool)} USDC`, color: "text-violet-400" },
+    { label: "固定成本", value: `${formatUSDC(data.costSettlementFixedCost)} USDC`, color: "text-rose-400" },
+    { label: "卖家利润", value: `${formatUSDC(data.costSettlementSellerProfit)} USDC`, color: "text-lime-400" },
+  ];
+
   return (
-    <div>
-      <h2 className="text-2xl font-bold mb-6">平台概览</h2>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-        {cards.map((c) => (
-          <div key={c.label} className="bg-gray-900 border border-gray-800 rounded-xl p-4">
-            <p className="text-xs text-gray-500 mb-1">{c.label}</p>
-            <p className={`text-xl font-bold ${c.color}`}>{c.value}</p>
-          </div>
-        ))}
-      </div>
+    <div className="space-y-8">
+      <h2 className="text-2xl font-bold">平台概览</h2>
+
+      {/* Retail Metrics */}
+      <section>
+        <h3 className="text-lg font-semibold text-gray-400 mb-3">零售 (V3)</h3>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          {retailCards.map((c) => (
+            <div key={c.label} className="bg-gray-900 border border-gray-800 rounded-xl p-4">
+              <p className="text-xs text-gray-500 mb-1">{c.label}</p>
+              <p className={`text-xl font-bold ${c.color}`}>{c.value}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Wholesale Metrics */}
+      <section>
+        <h3 className="text-lg font-semibold text-gray-400 mb-3">批发 (L1)</h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {wholesaleCards.map((c) => (
+            <div key={c.label} className="bg-gray-900 border border-gray-800 rounded-xl p-4">
+              <p className="text-xs text-gray-500 mb-1">{c.label}</p>
+              <p className={`text-xl font-bold ${c.color}`}>{c.value}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Cost Settlement Metrics */}
+      <section>
+        <h3 className="text-lg font-semibold text-gray-400 mb-3">成本结算</h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {costCards.map((c) => (
+            <div key={c.label} className="bg-gray-900 border border-gray-800 rounded-xl p-4">
+              <p className="text-xs text-gray-500 mb-1">{c.label}</p>
+              <p className={`text-xl font-bold ${c.color}`}>{c.value}</p>
+            </div>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }
