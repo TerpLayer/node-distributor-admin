@@ -65,6 +65,37 @@ export default function BlacklistPage() {
     },
   });
 
+  // ── L1 Propagation ──
+  const [propagateTarget, setPropagateTarget] = useState("");
+  const [propagateType, setPropagateType] = useState<"address" | "token">("address");
+  const [propagateAction, setPropagateAction] = useState<"blacklist" | "unblacklist">("blacklist");
+  const [propagateResult, setPropagateResult] = useState<{ msg: string; isError: boolean } | null>(null);
+  const [propagatePending, setPropagatePending] = useState(false);
+
+  const handlePropagate = async () => {
+    if (!propagateTarget.trim()) return;
+    setPropagatePending(true);
+    setPropagateResult(null);
+    try {
+      const res = await fetch("/api/blacklist/propagate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: propagateType,
+          target: propagateTarget.trim(),
+          blacklisted: propagateAction === "blacklist",
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      setPropagateResult({ msg: `传播成功 (${data.txHash?.slice(0, 14)}...)`, isError: false });
+      queryClient.invalidateQueries({ queryKey: ["blacklist-updates"] });
+    } catch (e: unknown) {
+      setPropagateResult({ msg: (e as Error).message || "传播失败", isError: true });
+    }
+    setPropagatePending(false);
+  };
+
   // ── Blacklist execute ──
   const [blType, setBlType] = useState<"token" | "address">("token");
   const [blTarget, setBlTarget] = useState("");
@@ -175,6 +206,59 @@ export default function BlacklistPage() {
         {blResult && (
           <p className={`mt-3 text-sm ${blResult.isError ? "text-red-400" : "text-green-400"}`}>
             {blResult.msg}
+          </p>
+        )}
+      </section>
+
+      {/* L1 Propagation */}
+      <section className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+        <h3 className="text-lg font-semibold mb-4">L1 黑名单传播</h3>
+        <p className="text-xs text-gray-500 mb-4">将黑名单操作传播到所有已注册的 L2 合约</p>
+        <div className="flex flex-wrap items-end gap-4">
+          <div>
+            <label className="block text-xs text-gray-500 mb-1">类型</label>
+            <select
+              value={propagateType}
+              onChange={(e) => { setPropagateType(e.target.value as "address" | "token"); setPropagateResult(null); }}
+              className="bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm"
+            >
+              <option value="address">地址</option>
+              <option value="token">商品 (Token ID)</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-xs text-gray-500 mb-1">操作</label>
+            <select
+              value={propagateAction}
+              onChange={(e) => { setPropagateAction(e.target.value as "blacklist" | "unblacklist"); setPropagateResult(null); }}
+              className="bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm"
+            >
+              <option value="blacklist">加入黑名单</option>
+              <option value="unblacklist">移出黑名单</option>
+            </select>
+          </div>
+          <div className="flex-1 min-w-[240px]">
+            <label className="block text-xs text-gray-500 mb-1">
+              {propagateType === "address" ? "钱包地址" : "商品编号"}
+            </label>
+            <input
+              value={propagateTarget}
+              onChange={(e) => { setPropagateTarget(e.target.value); setPropagateResult(null); }}
+              placeholder={propagateType === "address" ? "0x..." : "输入商品编号"}
+              className="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm"
+            />
+          </div>
+          <button
+            onClick={handlePropagate}
+            disabled={!propagateTarget.trim() || propagatePending}
+            className="px-4 py-2 bg-orange-600/20 text-orange-400 hover:bg-orange-600/30 rounded text-sm font-medium disabled:opacity-50"
+          >
+            {propagatePending ? "传播中..." : "传播到所有 L2"}
+          </button>
+        </div>
+        {propagateResult && (
+          <p className={`mt-3 text-sm ${propagateResult.isError ? "text-red-400" : "text-green-400"}`}>
+            {propagateResult.msg}
           </p>
         )}
       </section>
