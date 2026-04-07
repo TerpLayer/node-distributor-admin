@@ -7,6 +7,8 @@ import { cn } from "@/lib/utils";
 const navItems = [
   { href: "/", label: "概览", icon: "📊" },
   { href: "/blacklist", label: "黑名单管理", icon: "🚫" },
+  { href: "/l2-management", label: "L2 管理", icon: "🏭" },
+  { href: "/funds", label: "资金管理", icon: "💰" },
   { href: "/logs", label: "事件日志", icon: "📋" },
   { href: "/audit", label: "操作审计", icon: "🔍" },
   { href: "/analytics", label: "数据分析", icon: "📈" },
