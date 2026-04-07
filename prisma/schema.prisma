@@ -205,6 +205,68 @@ model ShortLink {
   @@map("short_links")
 }
 
+// -- Safe Transactions --
+model SafeTransaction {
+  id                    Int       @id @default(autoincrement())
+  safeTxHash            String    @unique @map("safe_tx_hash")
+  safeAddress           String    @map("safe_address")
+  to                    String
+  data                  String    @db.Text
+  status                String    @default("proposed") // proposed | confirmed | executed | failed
+  nonce                 Int
+  confirmationsRequired Int       @map("confirmations_required")
+  confirmations         Int       @default(0)
+  executedAt            DateTime? @map("executed_at")
+  executionTxHash       String?   @map("execution_tx_hash")
+  createdAt             DateTime  @default(now()) @map("created_at")
+  updatedAt             DateTime  @updatedAt @map("updated_at")
+  @@index([safeAddress])
+  @@index([status])
+  @@map("safe_transactions")
+}
+
+// -- Cost Settlement (V3 CostSettled event) --
+model CostSettlement {
+  id               Int      @id @default(autoincrement())
+  txHash           String   @map("tx_hash")
+  logIndex         Int      @map("log_index")
+  blockNumber      Int      @map("block_number")
+  buyer            String
+  tokenId          String   @map("token_id")
+  initialCost      Decimal  @map("initial_cost") @db.Decimal(78, 0)
+  distributionPool Decimal  @map("distribution_pool") @db.Decimal(78, 0)
+  fixedCost        Decimal  @map("fixed_cost") @db.Decimal(78, 0)
+  sellerProfit     Decimal  @map("seller_profit") @db.Decimal(78, 0)
+  timestamp        DateTime @default(now())
+  @@unique([txHash, logIndex], name: "txHash_logIndex")
+  @@index([buyer])
+  @@index([tokenId])
+  @@index([blockNumber])
+  @@map("cost_settlements")
+}
+
+// -- Wholesale Transactions (L1 WholesalePurchase/WholesalePurchaseBatch events) --
+model WholesaleTransaction {
+  id           Int      @id @default(autoincrement())
+  txHash       String   @map("tx_hash")
+  logIndex     Int      @map("log_index")
+  blockNumber  Int      @map("block_number")
+  buyer        String
+  tokenId      String?  @map("token_id")
+  tokenIds     String[] @map("token_ids")
+  amounts      String[]
+  paymentToken String   @map("payment_token")
+  totalPrice   Decimal  @map("total_price") @db.Decimal(78, 0)
+  rebateAmount Decimal  @map("rebate_amount") @db.Decimal(78, 0)
+  heldAmount   Decimal  @map("held_amount") @db.Decimal(78, 0)
+  isBatch      Boolean  @default(false) @map("is_batch")
+  timestamp    DateTime @default(now())
+  @@unique([txHash, logIndex], name: "txHash_logIndex")
+  @@index([buyer])
+  @@index([blockNumber])
+  @@map("wholesale_transactions")
+}
+
 // -- Admin Audit Log (new table for admin panel) --
 model AdminAuditLog {
   id          Int      @id @default(autoincrement())
