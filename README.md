@@ -1,6 +1,6 @@
-# NFT Admin 管理后台
+# 节点销售网络 — 管理后台
 
-NFT 分发平台管理后台，独立部署的 Next.js 应用，连接主项目 ([nw_nf](https://github.com/willNotRandom/nw_nf)) 同一数据库，提供平台运营和链上管理功能。
+节点销售网络管理后台，独立部署的 Next.js 应用，连接主项目 ([nw_nf](https://github.com/willNotRandom/nw_nf)) 同一数据库，提供平台运营和链上管理功能。
 
 ## 功能模块
 
