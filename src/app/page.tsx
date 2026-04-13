@@ -1,104 +1,104 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
-import { formatUSDC } from "@/lib/utils";
+const mockData = {
+  totalNodesSold: 1_842,
+  totalRevenue: 552_600,
+  activeUsers: 376,
+  dailySalesToday: 47,
+  dailyLimit: 100,
+  vipDistribution: { VIP0: 210, VIP1: 98, VIP2: 45, VIP3: 23 },
+  poolBalances: { V1: 28_500, V2: 15_200, V3: 8_900 },
+  pendingClaims: 12,
+};
 
-interface Metrics {
-  totalSalesVolume: string;
-  totalCommission: string;
-  activeUsers: number;
-  activeStorefronts: number;
-  pendingFlags: number;
-  totalTransfers: number;
-  totalPurchases: number;
-  blacklistedTokens: number;
-  blacklistedAddresses: number;
-  lastProcessedBlock: number;
-  // L1/V3 metrics
-  wholesaleVolume: string;
-  wholesaleRebates: string;
-  wholesaleHeldFunds: string;
-  l2Count: number;
-  costSettlementInitialCost: string;
-  costSettlementDistPool: string;
-  costSettlementFixedCost: string;
-  costSettlementSellerProfit: string;
+function MetricCard({
+  label,
+  value,
+  color = "text-white",
+  accent = false,
+}: {
+  label: string;
+  value: string | number;
+  color?: string;
+  accent?: boolean;
+}) {
+  return (
+    <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
+      <p className="text-xs text-gray-500 mb-2">{label}</p>
+      <p
+        className={`text-2xl font-bold ${accent ? "text-[#f0b429]" : color}`}
+      >
+        {value}
+      </p>
+    </div>
+  );
 }
 
 export default function DashboardPage() {
-  const { data, isLoading } = useQuery<Metrics>({
-    queryKey: ["metrics"],
-    queryFn: () => fetch("/api/metrics").then((r) => r.json()),
-  });
-
-  if (isLoading) return <div className="text-gray-500">加载中...</div>;
-  if (!data) return <div className="text-red-400">加载失败</div>;
-
-  const retailCards = [
-    { label: "总销售额", value: `${formatUSDC(data.totalSalesVolume)} USDC`, color: "text-green-400" },
-    { label: "总佣金", value: `${formatUSDC(data.totalCommission)} USDC`, color: "text-blue-400" },
-    { label: "活跃用户", value: data.activeUsers, color: "text-purple-400" },
-    { label: "活跃店铺", value: data.activeStorefronts, color: "text-cyan-400" },
-    { label: "总交易数", value: data.totalPurchases, color: "text-yellow-400" },
-    { label: "总转账数", value: data.totalTransfers, color: "text-orange-400" },
-    { label: "黑名单代币", value: data.blacklistedTokens, color: "text-red-400" },
-    { label: "黑名单地址", value: data.blacklistedAddresses, color: "text-red-400" },
-    { label: "待审标记", value: data.pendingFlags, color: data.pendingFlags > 0 ? "text-red-400" : "text-gray-400" },
-    { label: "索引器区块", value: data.lastProcessedBlock.toLocaleString(), color: "text-gray-400" },
-  ];
-
-  const wholesaleCards = [
-    { label: "批发总额", value: `${formatUSDC(data.wholesaleVolume)} USDC`, color: "text-green-400" },
-    { label: "返利总额", value: `${formatUSDC(data.wholesaleRebates)} USDC`, color: "text-emerald-400" },
-    { label: "持有资金", value: `${formatUSDC(data.wholesaleHeldFunds)} USDC`, color: "text-amber-400" },
-    { label: "L2 数量", value: data.l2Count, color: "text-indigo-400" },
-  ];
-
-  const costCards = [
-    { label: "初始成本", value: `${formatUSDC(data.costSettlementInitialCost)} USDC`, color: "text-sky-400" },
-    { label: "分销池", value: `${formatUSDC(data.costSettlementDistPool)} USDC`, color: "text-violet-400" },
-    { label: "固定成本", value: `${formatUSDC(data.costSettlementFixedCost)} USDC`, color: "text-rose-400" },
-    { label: "卖家利润", value: `${formatUSDC(data.costSettlementSellerProfit)} USDC`, color: "text-lime-400" },
-  ];
+  const d = mockData;
 
   return (
     <div className="space-y-8">
-      <h2 className="text-2xl font-bold">平台概览</h2>
+      <h2 className="text-2xl font-bold">仪表板</h2>
 
-      {/* Retail Metrics */}
+      {/* Core Metrics */}
       <section>
-        <h3 className="text-lg font-semibold text-gray-400 mb-3">零售 (V3)</h3>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          {retailCards.map((c) => (
-            <div key={c.label} className="bg-gray-900 border border-gray-800 rounded-xl p-4">
-              <p className="text-xs text-gray-500 mb-1">{c.label}</p>
-              <p className={`text-xl font-bold ${c.color}`}>{c.value}</p>
+        <h3 className="text-lg font-semibold text-gray-400 mb-3">核心指标</h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <MetricCard label="节点总销量" value={d.totalNodesSold.toLocaleString()} accent />
+          <MetricCard label="总收入 (USDT)" value={`$${d.totalRevenue.toLocaleString()}`} color="text-green-400" />
+          <MetricCard label="活跃用户" value={d.activeUsers} color="text-purple-400" />
+          <MetricCard label="待领取奖励" value={d.pendingClaims} color="text-orange-400" />
+        </div>
+      </section>
+
+      {/* Daily Sales */}
+      <section>
+        <h3 className="text-lg font-semibold text-gray-400 mb-3">今日销售</h3>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <MetricCard label="今日已售" value={d.dailySalesToday} color="text-cyan-400" />
+          <MetricCard label="每日限额" value={d.dailyLimit} color="text-gray-300" />
+          <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
+            <p className="text-xs text-gray-500 mb-2">进度</p>
+            <div className="mt-1">
+              <div className="w-full bg-gray-800 rounded-full h-3">
+                <div
+                  className="bg-[#f0b429] h-3 rounded-full transition-all"
+                  style={{ width: `${Math.min(100, (d.dailySalesToday / d.dailyLimit) * 100)}%` }}
+                />
+              </div>
+              <p className="text-xs text-gray-500 mt-1">{d.dailySalesToday}/{d.dailyLimit}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* VIP Distribution */}
+      <section>
+        <h3 className="text-lg font-semibold text-gray-400 mb-3">VIP 分布</h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {Object.entries(d.vipDistribution).map(([level, count]) => (
+            <div key={level} className="bg-gray-900 border border-gray-800 rounded-xl p-5">
+              <p className="text-xs text-gray-500 mb-2">{level}</p>
+              <p className={`text-2xl font-bold ${
+                level === "VIP3" ? "text-[#f0b429]" :
+                level === "VIP2" ? "text-purple-400" :
+                level === "VIP1" ? "text-blue-400" :
+                "text-gray-400"
+              }`}>{count}</p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Wholesale Metrics */}
+      {/* Reward Pool Balances */}
       <section>
-        <h3 className="text-lg font-semibold text-gray-400 mb-3">批发 (L1)</h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {wholesaleCards.map((c) => (
-            <div key={c.label} className="bg-gray-900 border border-gray-800 rounded-xl p-4">
-              <p className="text-xs text-gray-500 mb-1">{c.label}</p>
-              <p className={`text-xl font-bold ${c.color}`}>{c.value}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Cost Settlement Metrics */}
-      <section>
-        <h3 className="text-lg font-semibold text-gray-400 mb-3">成本结算</h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {costCards.map((c) => (
-            <div key={c.label} className="bg-gray-900 border border-gray-800 rounded-xl p-4">
-              <p className="text-xs text-gray-500 mb-1">{c.label}</p>
-              <p className={`text-xl font-bold ${c.color}`}>{c.value}</p>
+        <h3 className="text-lg font-semibold text-gray-400 mb-3">奖励池余额</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {Object.entries(d.poolBalances).map(([pool, balance]) => (
+            <div key={pool} className="bg-gray-900 border border-gray-800 rounded-xl p-5">
+              <p className="text-xs text-gray-500 mb-2">{pool} 奖励池</p>
+              <p className="text-2xl font-bold text-green-400">${balance.toLocaleString()}</p>
             </div>
           ))}
         </div>

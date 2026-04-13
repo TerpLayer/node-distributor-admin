@@ -1,135 +1,68 @@
-export const nftDistributionAbi = [
-  // View functions
+// NodeSale contract ABI - matches contracts/NodeSale.sol
+export const nodeSaleAbi = [
+  // ── View functions ──
   {
-    type: "function", name: "collections", stateMutability: "view",
-    inputs: [{ name: "collectionId", type: "uint256" }],
-    outputs: [
-      { name: "creator", type: "address" },
-      { name: "metadataURI", type: "string" },
-      { name: "paymentToken", type: "address" },
-      { name: "active", type: "bool" },
-    ],
+    type: "function", name: "dailyLimit", stateMutability: "view",
+    inputs: [], outputs: [{ name: "", type: "uint256" }],
   },
   {
-    type: "function", name: "tokenConfigs", stateMutability: "view",
-    inputs: [{ name: "tokenId", type: "uint256" }],
-    outputs: [
-      { name: "collectionId", type: "uint256" },
-      { name: "price", type: "uint256" },
-      { name: "maxSupply", type: "uint256" },
-      { name: "totalMinted", type: "uint256" },
-    ],
+    type: "function", name: "dailySold", stateMutability: "view",
+    inputs: [{ name: "day", type: "uint256" }],
+    outputs: [{ name: "", type: "uint256" }],
   },
   {
-    type: "function", name: "platformWallet", stateMutability: "view",
-    inputs: [], outputs: [{ name: "", type: "address" }],
+    type: "function", name: "currentDay", stateMutability: "view",
+    inputs: [], outputs: [{ name: "", type: "uint256" }],
   },
   {
-    type: "function", name: "blacklistedTokens", stateMutability: "view",
-    inputs: [{ name: "tokenId", type: "uint256" }],
-    outputs: [{ name: "", type: "bool" }],
+    type: "function", name: "vipLevel", stateMutability: "view",
+    inputs: [{ name: "user", type: "address" }],
+    outputs: [{ name: "", type: "uint8" }],
   },
   {
-    type: "function", name: "blacklistedAddresses", stateMutability: "view",
+    type: "function", name: "poolBalances", stateMutability: "view",
+    inputs: [{ name: "poolId", type: "uint8" }],
+    outputs: [{ name: "", type: "uint256" }],
+  },
+  {
+    type: "function", name: "claimableTierReward", stateMutability: "view",
+    inputs: [{ name: "user", type: "address" }],
+    outputs: [{ name: "", type: "uint256" }],
+  },
+  {
+    type: "function", name: "claimablePoolReward", stateMutability: "view",
+    inputs: [{ name: "user", type: "address" }, { name: "poolId", type: "uint8" }],
+    outputs: [{ name: "", type: "uint256" }],
+  },
+  {
+    type: "function", name: "referrerOf", stateMutability: "view",
+    inputs: [{ name: "user", type: "address" }],
+    outputs: [{ name: "", type: "address" }],
+  },
+  {
+    type: "function", name: "purchaseCount", stateMutability: "view",
+    inputs: [{ name: "user", type: "address" }],
+    outputs: [{ name: "", type: "uint256" }],
+  },
+  {
+    type: "function", name: "directReferralCount", stateMutability: "view",
+    inputs: [{ name: "user", type: "address" }],
+    outputs: [{ name: "", type: "uint256" }],
+  },
+  {
+    type: "function", name: "communityNodeCount", stateMutability: "view",
+    inputs: [{ name: "user", type: "address" }],
+    outputs: [{ name: "", type: "uint256" }],
+  },
+  {
+    type: "function", name: "communityVipCount", stateMutability: "view",
+    inputs: [{ name: "user", type: "address" }, { name: "level", type: "uint8" }],
+    outputs: [{ name: "", type: "uint256" }],
+  },
+  {
+    type: "function", name: "isBlacklisted", stateMutability: "view",
     inputs: [{ name: "account", type: "address" }],
     outputs: [{ name: "", type: "bool" }],
-  },
-  {
-    type: "function", name: "nextTokenId", stateMutability: "view",
-    inputs: [], outputs: [{ name: "", type: "uint256" }],
-  },
-  {
-    type: "function", name: "nextCollectionId", stateMutability: "view",
-    inputs: [], outputs: [{ name: "", type: "uint256" }],
-  },
-  {
-    type: "function", name: "claimableBalances", stateMutability: "view",
-    inputs: [{ name: "token", type: "address" }, { name: "account", type: "address" }],
-    outputs: [{ name: "", type: "uint256" }],
-  },
-  // Write functions (admin only)
-  {
-    type: "function", name: "setTokenBlacklist", stateMutability: "nonpayable",
-    inputs: [{ name: "tokenId", type: "uint256" }, { name: "blacklisted", type: "bool" }],
-    outputs: [],
-  },
-  {
-    type: "function", name: "setAddressBlacklist", stateMutability: "nonpayable",
-    inputs: [{ name: "account", type: "address" }, { name: "blacklisted", type: "bool" }],
-    outputs: [],
-  },
-  // Events
-  {
-    type: "event", name: "BlacklistUpdated",
-    inputs: [
-      { name: "entityType", type: "uint8", indexed: false },
-      { name: "entityId", type: "uint256", indexed: false },
-      { name: "entityAddress", type: "address", indexed: false },
-      { name: "isBlacklisted", type: "bool", indexed: false },
-    ],
-  },
-  {
-    type: "event", name: "Purchase",
-    inputs: [
-      { name: "buyer", type: "address", indexed: true },
-      { name: "seller", type: "address", indexed: true },
-      { name: "tokenId", type: "uint256", indexed: true },
-      { name: "price", type: "uint256", indexed: false },
-      { name: "amount", type: "uint256", indexed: false },
-      { name: "commissionAmount", type: "uint256", indexed: false },
-    ],
-  },
-] as const;
-
-// --- V3 Contract ABI (extends base with cost settlement, multi-token, pausable) ---
-export const nftDistributionV3Abi = [
-  // V3 Config functions
-  {
-    type: "function", name: "setCostConfig", stateMutability: "nonpayable",
-    inputs: [
-      { name: "collectionId", type: "uint256" },
-      { name: "initialCostFixed", type: "uint256" },
-      { name: "distributionPoolFixed", type: "uint256" },
-      { name: "fixedCostFixed", type: "uint256" },
-    ],
-    outputs: [],
-  },
-  {
-    type: "function", name: "setRetailPrice", stateMutability: "nonpayable",
-    inputs: [{ name: "tokenId", type: "uint256" }, { name: "price", type: "uint256" }],
-    outputs: [],
-  },
-  {
-    type: "function", name: "setAllowedToken", stateMutability: "nonpayable",
-    inputs: [{ name: "token", type: "address" }, { name: "allowed", type: "bool" }],
-    outputs: [],
-  },
-  // V3 Purchase
-  {
-    type: "function", name: "purchase", stateMutability: "nonpayable",
-    inputs: [
-      { name: "tokenId", type: "uint256" },
-      { name: "amount", type: "uint256" },
-      { name: "referrer", type: "address" },
-      { name: "paymentToken", type: "address" },
-    ],
-    outputs: [],
-  },
-  // V3 View functions
-  {
-    type: "function", name: "costConfigs", stateMutability: "view",
-    inputs: [{ name: "collectionId", type: "uint256" }],
-    outputs: [
-      { name: "initialCostFixed", type: "uint256" },
-      { name: "distributionPoolFixed", type: "uint256" },
-      { name: "fixedCostFixed", type: "uint256" },
-      { name: "active", type: "bool" },
-    ],
-  },
-  {
-    type: "function", name: "retailPrices", stateMutability: "view",
-    inputs: [{ name: "tokenId", type: "uint256" }],
-    outputs: [{ name: "", type: "uint256" }],
   },
   {
     type: "function", name: "allowedTokens", stateMutability: "view",
@@ -137,16 +70,75 @@ export const nftDistributionV3Abi = [
     outputs: [{ name: "", type: "bool" }],
   },
   {
-    type: "function", name: "heldCosts", stateMutability: "view",
-    inputs: [{ name: "token", type: "address" }],
-    outputs: [{ name: "", type: "uint256" }],
+    type: "function", name: "platformWallet", stateMutability: "view",
+    inputs: [], outputs: [{ name: "", type: "address" }],
   },
   {
-    type: "function", name: "L1_AUTHORITY_ROLE", stateMutability: "view",
-    inputs: [],
-    outputs: [{ name: "", type: "bytes32" }],
+    type: "function", name: "poolConfig", stateMutability: "view",
+    inputs: [{ name: "poolId", type: "uint8" }],
+    outputs: [
+      { name: "bps", type: "uint256" },
+      { name: "minVipLevel", type: "uint8" },
+    ],
   },
-  // V3 Authority functions
+  {
+    type: "function", name: "tierConfig", stateMutability: "view",
+    inputs: [{ name: "vipLevel", type: "uint8" }],
+    outputs: [
+      { name: "rewardBps", type: "uint256" },
+      { name: "requiredDirectReferrals", type: "uint256" },
+      { name: "requiredCommunityNodes", type: "uint256" },
+    ],
+  },
+
+  // ── Write functions (admin only) ──
+  {
+    type: "function", name: "setDailyLimit", stateMutability: "nonpayable",
+    inputs: [{ name: "limit", type: "uint256" }],
+    outputs: [],
+  },
+  {
+    type: "function", name: "setBlacklist", stateMutability: "nonpayable",
+    inputs: [{ name: "account", type: "address" }, { name: "blacklisted", type: "bool" }],
+    outputs: [],
+  },
+  {
+    type: "function", name: "setAllowedToken", stateMutability: "nonpayable",
+    inputs: [{ name: "token", type: "address" }, { name: "allowed", type: "bool" }],
+    outputs: [],
+  },
+  {
+    type: "function", name: "setPoolConfig", stateMutability: "nonpayable",
+    inputs: [
+      { name: "poolId", type: "uint8" },
+      { name: "bps", type: "uint256" },
+      { name: "minVipLevel", type: "uint8" },
+    ],
+    outputs: [],
+  },
+  {
+    type: "function", name: "setTierConfig", stateMutability: "nonpayable",
+    inputs: [
+      { name: "vipLevel", type: "uint8" },
+      { name: "rewardBps", type: "uint256" },
+      { name: "requiredDirectReferrals", type: "uint256" },
+      { name: "requiredCommunityNodes", type: "uint256" },
+    ],
+    outputs: [],
+  },
+  {
+    type: "function", name: "setVipBatch", stateMutability: "nonpayable",
+    inputs: [
+      { name: "users", type: "address[]" },
+      { name: "levels", type: "uint8[]" },
+    ],
+    outputs: [],
+  },
+  {
+    type: "function", name: "settlePool", stateMutability: "nonpayable",
+    inputs: [{ name: "poolId", type: "uint8" }],
+    outputs: [],
+  },
   {
     type: "function", name: "pause", stateMutability: "nonpayable",
     inputs: [], outputs: [],
@@ -155,173 +147,46 @@ export const nftDistributionV3Abi = [
     type: "function", name: "unpause", stateMutability: "nonpayable",
     inputs: [], outputs: [],
   },
-  {
-    type: "function", name: "setAddressBlacklistByAuthority", stateMutability: "nonpayable",
-    inputs: [{ name: "account", type: "address" }, { name: "blacklisted", type: "bool" }],
-    outputs: [],
-  },
-  // V3 Events
-  {
-    type: "event", name: "CostSettled",
-    inputs: [
-      { name: "buyer", type: "address", indexed: true },
-      { name: "tokenId", type: "uint256", indexed: true },
-      { name: "initialCost", type: "uint256", indexed: false },
-      { name: "distributionPool", type: "uint256", indexed: false },
-      { name: "fixedCost", type: "uint256", indexed: false },
-      { name: "sellerProfit", type: "uint256", indexed: false },
-    ],
-  },
-] as const;
 
-// --- L1 Contract ABI (wholesale hub) ---
-export const nftDistributionL1Abi = [
-  // Purchase functions
+  // ── Events ──
   {
-    type: "function", name: "wholesalePurchase", stateMutability: "nonpayable",
-    inputs: [
-      { name: "tokenId", type: "uint256" },
-      { name: "amount", type: "uint256" },
-      { name: "paymentToken", type: "address" },
-    ],
-    outputs: [],
-  },
-  {
-    type: "function", name: "wholesalePurchaseBatch", stateMutability: "nonpayable",
-    inputs: [
-      { name: "tokenIds", type: "uint256[]" },
-      { name: "amounts", type: "uint256[]" },
-      { name: "paymentToken", type: "address" },
-    ],
-    outputs: [],
-  },
-  // L2 Registry
-  {
-    type: "function", name: "registerL2", stateMutability: "nonpayable",
-    inputs: [{ name: "l2Contract", type: "address" }],
-    outputs: [],
-  },
-  {
-    type: "function", name: "deregisterL2", stateMutability: "nonpayable",
-    inputs: [{ name: "l2Contract", type: "address" }],
-    outputs: [],
-  },
-  // Propagation
-  {
-    type: "function", name: "propagateBlacklist", stateMutability: "nonpayable",
-    inputs: [{ name: "account", type: "address" }, { name: "blacklisted", type: "bool" }],
-    outputs: [],
-  },
-  {
-    type: "function", name: "propagateTokenBlacklist", stateMutability: "nonpayable",
-    inputs: [{ name: "tokenId", type: "uint256" }, { name: "blacklisted", type: "bool" }],
-    outputs: [],
-  },
-  {
-    type: "function", name: "propagatePause", stateMutability: "nonpayable",
-    inputs: [], outputs: [],
-  },
-  {
-    type: "function", name: "propagateUnpause", stateMutability: "nonpayable",
-    inputs: [], outputs: [],
-  },
-  // Admin
-  {
-    type: "function", name: "withdrawHeldFunds", stateMutability: "nonpayable",
-    inputs: [
-      { name: "token", type: "address" },
-      { name: "amount", type: "uint256" },
-      { name: "recipient", type: "address" },
-    ],
-    outputs: [],
-  },
-  {
-    type: "function", name: "setYieldPool", stateMutability: "nonpayable",
-    inputs: [{ name: "pool", type: "address" }],
-    outputs: [],
-  },
-  // View functions
-  {
-    type: "function", name: "heldFunds", stateMutability: "view",
-    inputs: [{ name: "token", type: "address" }],
-    outputs: [{ name: "", type: "uint256" }],
-  },
-  {
-    type: "function", name: "registeredL2s", stateMutability: "view",
-    inputs: [{ name: "index", type: "uint256" }],
-    outputs: [{ name: "", type: "address" }],
-  },
-  {
-    type: "function", name: "getRegisteredL2Count", stateMutability: "view",
-    inputs: [],
-    outputs: [{ name: "", type: "uint256" }],
-  },
-  {
-    type: "function", name: "isRegisteredL2", stateMutability: "view",
-    inputs: [{ name: "l2Contract", type: "address" }],
-    outputs: [{ name: "", type: "bool" }],
-  },
-  {
-    type: "function", name: "yieldPool", stateMutability: "view",
-    inputs: [],
-    outputs: [{ name: "", type: "address" }],
-  },
-  {
-    type: "function", name: "allowedTokens", stateMutability: "view",
-    inputs: [{ name: "token", type: "address" }],
-    outputs: [{ name: "", type: "bool" }],
-  },
-  {
-    type: "function", name: "wholesaleConfigs", stateMutability: "view",
-    inputs: [{ name: "tokenId", type: "uint256" }],
-    outputs: [
-      { name: "price", type: "uint256" },
-      { name: "maxSupply", type: "uint256" },
-      { name: "totalMinted", type: "uint256" },
-      { name: "metadataURI", type: "string" },
-      { name: "active", type: "bool" },
-    ],
-  },
-  // Events
-  {
-    type: "event", name: "WholesalePurchase",
+    type: "event", name: "NodePurchased",
     inputs: [
       { name: "buyer", type: "address", indexed: true },
-      { name: "tokenId", type: "uint256", indexed: true },
+      { name: "referrer", type: "address", indexed: true },
       { name: "amount", type: "uint256", indexed: false },
-      { name: "paymentToken", type: "address", indexed: false },
-      { name: "totalPrice", type: "uint256", indexed: false },
-      { name: "rebateAmount", type: "uint256", indexed: false },
-      { name: "heldAmount", type: "uint256", indexed: false },
+      { name: "price", type: "uint256", indexed: false },
+      { name: "token", type: "address", indexed: false },
     ],
   },
   {
-    type: "event", name: "WholesalePurchaseBatch",
+    type: "event", name: "ReferrerBound",
     inputs: [
-      { name: "buyer", type: "address", indexed: true },
-      { name: "tokenIds", type: "uint256[]", indexed: false },
-      { name: "amounts", type: "uint256[]", indexed: false },
-      { name: "paymentToken", type: "address", indexed: false },
-      { name: "totalPrice", type: "uint256", indexed: false },
-      { name: "rebateAmount", type: "uint256", indexed: false },
-      { name: "heldAmount", type: "uint256", indexed: false },
+      { name: "user", type: "address", indexed: true },
+      { name: "referrer", type: "address", indexed: true },
     ],
   },
   {
-    type: "event", name: "L2Registered",
-    inputs: [{ name: "l2Contract", type: "address", indexed: true }],
-  },
-  {
-    type: "event", name: "L2Deregistered",
-    inputs: [{ name: "l2Contract", type: "address", indexed: true }],
-  },
-  {
-    type: "event", name: "BlacklistPropagated",
+    type: "event", name: "VipLevelUpdated",
     inputs: [
-      { name: "l2Contract", type: "address", indexed: true },
+      { name: "user", type: "address", indexed: true },
+      { name: "oldLevel", type: "uint8", indexed: false },
+      { name: "newLevel", type: "uint8", indexed: false },
+    ],
+  },
+  {
+    type: "event", name: "PoolSettled",
+    inputs: [
+      { name: "poolId", type: "uint8", indexed: true },
+      { name: "totalAmount", type: "uint256", indexed: false },
+      { name: "participants", type: "uint256", indexed: false },
+    ],
+  },
+  {
+    type: "event", name: "Blacklisted",
+    inputs: [
       { name: "account", type: "address", indexed: true },
-      { name: "blacklisted", type: "bool", indexed: false },
-      { name: "success", type: "bool", indexed: false },
+      { name: "isBlacklisted", type: "bool", indexed: false },
     ],
   },
 ] as const;

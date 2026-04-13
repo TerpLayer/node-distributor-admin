@@ -3,15 +3,26 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import {
+  LayoutDashboard,
+  Users,
+  Settings,
+  Coins,
+  Bot,
+  Globe,
+  ShieldBan,
+  FileSearch,
+} from "lucide-react";
 
 const navItems = [
-  { href: "/", label: "概览", icon: "📊" },
-  { href: "/blacklist", label: "黑名单管理", icon: "🚫" },
-  { href: "/l2-management", label: "L2 管理", icon: "🏭" },
-  { href: "/funds", label: "资金管理", icon: "💰" },
-  { href: "/logs", label: "事件日志", icon: "📋" },
-  { href: "/audit", label: "操作审计", icon: "🔍" },
-  { href: "/analytics", label: "数据分析", icon: "📈" },
+  { href: "/", label: "仪表板", icon: LayoutDashboard },
+  { href: "/users", label: "用户管理", icon: Users },
+  { href: "/config", label: "节点配置", icon: Settings },
+  { href: "/pools", label: "奖励池", icon: Coins },
+  { href: "/bots", label: "Bot 监控", icon: Bot },
+  { href: "/chains", label: "多链管理", icon: Globe },
+  { href: "/blacklist", label: "黑名单", icon: ShieldBan },
+  { href: "/audit", label: "审计日志", icon: FileSearch },
 ];
 
 export function Sidebar() {
@@ -20,12 +31,13 @@ export function Sidebar() {
   return (
     <aside className="fixed left-0 top-0 h-screen w-64 bg-gray-900 border-r border-gray-800 flex flex-col">
       <div className="p-6 border-b border-gray-800">
-        <h1 className="text-xl font-bold text-white">NFT Admin</h1>
+        <h1 className="text-xl font-bold text-white">Node Store</h1>
         <p className="text-xs text-gray-500 mt-1">管理后台</p>
       </div>
       <nav className="flex-1 p-4 space-y-1">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
+          const Icon = item.icon;
           return (
             <Link
               key={item.href}
@@ -37,7 +49,7 @@ export function Sidebar() {
                   : "text-gray-400 hover:text-gray-200 hover:bg-gray-800"
               )}
             >
-              <span>{item.icon}</span>
+              <Icon className="w-4 h-4" />
               <span>{item.label}</span>
             </Link>
           );
