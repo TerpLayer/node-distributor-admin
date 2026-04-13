@@ -17,6 +17,11 @@ const mockSettlements = [
   { date: "2026-04-10", pool: "V2", participants: 40, total: 2_700, perPerson: 67.50 },
 ];
 
+const poolBadgeStyle = (pool: string) =>
+  pool === "V3" ? "bg-[#f0b429]/20 text-[#f0b429]" :
+  pool === "V2" ? "bg-purple-900/50 text-purple-400" :
+  "bg-blue-900/50 text-blue-400";
+
 export default function PoolsPage() {
   const lastSettlement = "2026-04-12 20:00:00";
 
@@ -53,35 +58,20 @@ export default function PoolsPage() {
       {/* Settlement History */}
       <section>
         <h3 className="text-lg font-semibold text-gray-400 mb-3">结算历史</h3>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm min-w-[500px]">
-            <thead>
-              <tr className="text-gray-500 border-b border-gray-800">
-                <th className="text-left py-2 px-3">日期</th>
-                <th className="text-left py-2 px-3">奖励池</th>
-                <th className="text-right py-2 px-3">参与人数</th>
-                <th className="text-right py-2 px-3">分配总额 (USDT)</th>
-                <th className="text-right py-2 px-3">人均 (USDT)</th>
-              </tr>
-            </thead>
-            <tbody>
-              {mockSettlements.map((s, i) => (
-                <tr key={i} className="border-b border-gray-800/50 hover:bg-gray-800/30">
-                  <td className="py-2 px-3 text-gray-400">{s.date}</td>
-                  <td className="py-2 px-3">
-                    <span className={`px-2 py-0.5 rounded text-xs font-medium ${
-                      s.pool === "V3" ? "bg-[#f0b429]/20 text-[#f0b429]" :
-                      s.pool === "V2" ? "bg-purple-900/50 text-purple-400" :
-                      "bg-blue-900/50 text-blue-400"
-                    }`}>{s.pool}</span>
-                  </td>
-                  <td className="py-2 px-3 text-right">{s.participants}</td>
-                  <td className="py-2 px-3 text-right text-green-400">${s.total.toLocaleString()}</td>
-                  <td className="py-2 px-3 text-right text-gray-300">${s.perPerson.toFixed(2)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="space-y-3">
+          {mockSettlements.map((s, i) => (
+            <div key={i} className="bg-gray-900 border border-gray-800 rounded-xl p-4">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-sm text-gray-400">{s.date}</span>
+                <span className={`px-2 py-0.5 rounded text-xs font-medium ${poolBadgeStyle(s.pool)}`}>{s.pool}</span>
+              </div>
+              <div className="grid grid-cols-3 gap-2 text-xs">
+                <div className="text-gray-500">参与人数: <span className="text-gray-300">{s.participants}</span></div>
+                <div className="text-gray-500">总额: <span className="text-green-400">${s.total.toLocaleString()}</span></div>
+                <div className="text-gray-500">人均: <span className="text-gray-300">${s.perPerson.toFixed(2)}</span></div>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
     </div>

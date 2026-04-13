@@ -52,8 +52,8 @@ export default function BlacklistPage() {
       {/* Add Address */}
       <section className="bg-gray-900 border border-gray-800 rounded-xl p-6">
         <h3 className="text-lg font-semibold mb-4">添加地址</h3>
-        <div className="flex flex-col sm:flex-row sm:items-end gap-4">
-          <div className="flex-1">
+        <div className="space-y-3">
+          <div>
             <label className="block text-xs text-gray-500 mb-1">钱包地址</label>
             <input
               value={newAddress}
@@ -65,7 +65,7 @@ export default function BlacklistPage() {
           <button
             onClick={handleAdd}
             disabled={!newAddress.trim()}
-            className="px-6 py-2 bg-red-600/20 text-red-400 hover:bg-red-600/30 rounded text-sm font-medium disabled:opacity-50 transition-colors"
+            className="w-full px-6 py-2 bg-red-600/20 text-red-400 hover:bg-red-600/30 rounded text-sm font-medium disabled:opacity-50 transition-colors"
           >
             加入黑名单
           </button>
@@ -85,36 +85,24 @@ export default function BlacklistPage() {
         {blacklist.length === 0 ? (
           <p className="text-gray-500 text-sm">黑名单为空</p>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm min-w-[500px]">
-              <thead>
-                <tr className="text-gray-500 border-b border-gray-800">
-                  <th className="text-left py-2 px-3">地址</th>
-                  <th className="text-left py-2 px-3">添加日期</th>
-                  <th className="text-left py-2 px-3">操作人</th>
-                  <th className="text-left py-2 px-3">操作</th>
-                </tr>
-              </thead>
-              <tbody>
-                {blacklist.map((entry) => (
-                  <tr key={entry.address} className="border-b border-gray-800/50 hover:bg-gray-800/30">
-                    <td className="py-2 px-3 font-mono text-red-400">
-                      {truncateAddress(entry.address, 6)}
-                    </td>
-                    <td className="py-2 px-3 text-gray-400">{entry.dateAdded}</td>
-                    <td className="py-2 px-3 text-gray-400">{entry.addedBy}</td>
-                    <td className="py-2 px-3">
-                      <button
-                        onClick={() => handleRemove(entry.address)}
-                        className="px-3 py-1 bg-green-600/20 text-green-400 hover:bg-green-600/30 rounded text-xs transition-colors"
-                      >
-                        移除
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="space-y-3">
+            {blacklist.map((entry) => (
+              <div key={entry.address} className="bg-gray-900 border border-gray-800 rounded-xl p-4">
+                <div className="flex justify-between items-start mb-2">
+                  <span className="text-sm font-mono text-red-400">{truncateAddress(entry.address, 6)}</span>
+                  <button
+                    onClick={() => handleRemove(entry.address)}
+                    className="px-3 py-1 bg-green-600/20 text-green-400 hover:bg-green-600/30 rounded text-xs transition-colors"
+                  >
+                    移除
+                  </button>
+                </div>
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div className="text-gray-500">添加日期: <span className="text-gray-300">{entry.dateAdded}</span></div>
+                  <div className="text-gray-500">操作人: <span className="text-gray-300">{entry.addedBy}</span></div>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </section>

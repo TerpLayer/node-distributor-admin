@@ -85,44 +85,29 @@ export default function AuditPage() {
           <p className="text-gray-500 text-lg">暂无审计记录</p>
         </div>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm min-w-[600px]">
-            <thead>
-              <tr className="text-gray-500 border-b border-gray-800">
-                <th className="text-left py-2 px-3">时间</th>
-                <th className="text-left py-2 px-3">操作</th>
-                <th className="text-left py-2 px-3">执行者</th>
-                <th className="text-left py-2 px-3">目标</th>
-                <th className="text-left py-2 px-3">详情</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredLogs.map((log) => {
-                const style = getActionStyle(log.action);
-                return (
-                  <tr key={log.id} className="border-b border-gray-800/50 hover:bg-gray-800/30">
-                    <td className="py-2 px-3 text-gray-500 text-xs whitespace-nowrap">
-                      {log.time}
-                    </td>
-                    <td className="py-2 px-3">
-                      <span className={`px-2 py-0.5 rounded text-xs ${style.color}`}>
-                        {style.label}
-                      </span>
-                    </td>
-                    <td className="py-2 px-3">
-                      {log.actor === "bot" ? (
-                        <span className="text-cyan-400">Bot</span>
-                      ) : (
-                        <span className="text-blue-400 font-mono">{truncateAddress(log.actor)}</span>
-                      )}
-                    </td>
-                    <td className="py-2 px-3 text-gray-300">{log.target}</td>
-                    <td className="py-2 px-3 text-gray-500 text-xs">{log.details}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+        <div className="space-y-3">
+          {filteredLogs.map((log) => {
+            const style = getActionStyle(log.action);
+            return (
+              <div key={log.id} className="bg-gray-900 border border-gray-800 rounded-xl p-4">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-xs text-gray-500">{log.time}</span>
+                  <span className={`px-2 py-0.5 rounded text-xs ${style.color}`}>
+                    {style.label}
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 gap-2 text-xs mb-1">
+                  <div className="text-gray-500">执行者: {log.actor === "bot" ? (
+                    <span className="text-cyan-400">Bot</span>
+                  ) : (
+                    <span className="text-blue-400 font-mono">{truncateAddress(log.actor)}</span>
+                  )}</div>
+                  <div className="text-gray-500">目标: <span className="text-gray-300">{log.target}</span></div>
+                </div>
+                <div className="text-xs text-gray-500 mt-1">{log.details}</div>
+              </div>
+            );
+          })}
         </div>
       )}
     </div>

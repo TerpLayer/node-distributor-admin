@@ -28,47 +28,32 @@ export default function UsersPage() {
       <h2 className="text-2xl font-bold">用户管理</h2>
       <p className="text-sm text-gray-500">共 {mockUsers.length} 个用户</p>
 
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm min-w-[700px]">
-          <thead>
-            <tr className="text-gray-500 border-b border-gray-800">
-              <th className="text-left py-3 px-3">地址</th>
-              <th className="text-left py-3 px-3">VIP 等级</th>
-              <th className="text-right py-3 px-3">持有节点</th>
-              <th className="text-right py-3 px-3">直推人数</th>
-              <th className="text-right py-3 px-3">社区节点</th>
-              <th className="text-left py-3 px-3">推荐人</th>
-              <th className="text-left py-3 px-3">状态</th>
-            </tr>
-          </thead>
-          <tbody>
-            {mockUsers.map((user) => (
-              <tr key={user.address} className="border-b border-gray-800/50 hover:bg-gray-800/30">
-                <td className="py-3 px-3 font-mono text-blue-400">
-                  {truncateAddress(user.address)}
-                </td>
-                <td className="py-3 px-3">
-                  <span className={`px-2 py-0.5 rounded text-xs font-medium ${vipBadgeStyles[user.vip]}`}>
-                    VIP{user.vip}
-                  </span>
-                </td>
-                <td className="py-3 px-3 text-right">{user.nodes}</td>
-                <td className="py-3 px-3 text-right">{user.directReferrals}</td>
-                <td className="py-3 px-3 text-right">{user.communityNodes}</td>
-                <td className="py-3 px-3 font-mono text-gray-400">
-                  {truncateAddress(user.referrer)}
-                </td>
-                <td className="py-3 px-3">
-                  {user.blacklisted ? (
-                    <span className="px-2 py-0.5 rounded text-xs bg-red-900/50 text-red-400">已拉黑</span>
-                  ) : (
-                    <span className="px-2 py-0.5 rounded text-xs bg-green-900/50 text-green-400">正常</span>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className="space-y-3">
+        {mockUsers.map((user) => (
+          <div key={user.address} className="bg-gray-900 border border-gray-800 rounded-xl p-4">
+            <div className="flex justify-between items-start mb-3">
+              <span className="text-sm font-mono text-blue-400">{truncateAddress(user.address)}</span>
+              <div className="flex items-center gap-2">
+                <span className={`px-2 py-0.5 rounded text-xs font-medium ${vipBadgeStyles[user.vip]}`}>
+                  VIP{user.vip}
+                </span>
+                {user.blacklisted ? (
+                  <span className="px-2 py-0.5 rounded text-xs bg-red-900/50 text-red-400">已拉黑</span>
+                ) : (
+                  <span className="px-2 py-0.5 rounded text-xs bg-green-900/50 text-green-400">正常</span>
+                )}
+              </div>
+            </div>
+            <div className="grid grid-cols-3 gap-2 text-xs mb-2">
+              <div className="text-gray-500">持有节点: <span className="text-gray-300">{user.nodes}</span></div>
+              <div className="text-gray-500">直推: <span className="text-gray-300">{user.directReferrals}</span></div>
+              <div className="text-gray-500">社区: <span className="text-gray-300">{user.communityNodes}</span></div>
+            </div>
+            <div className="text-xs text-gray-500">
+              推荐人: <span className="font-mono text-gray-400">{truncateAddress(user.referrer)}</span>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

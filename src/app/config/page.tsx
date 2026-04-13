@@ -83,85 +83,55 @@ export default function ConfigPage() {
       {/* Pool Allocation BPS */}
       <section className="bg-gray-900 border border-gray-800 rounded-xl p-6">
         <h3 className="text-lg font-semibold mb-4">奖励池分配比例</h3>
-        <div className="overflow-x-auto">
-        <table className="w-full text-sm min-w-[400px]">
-          <thead>
-            <tr className="text-gray-500 border-b border-gray-800">
-              <th className="text-left py-2 px-3">奖励池</th>
-              <th className="text-right py-2 px-3">BPS</th>
-              <th className="text-right py-2 px-3">百分比</th>
-              <th className="text-left py-2 px-3">最低 VIP 等级</th>
-            </tr>
-          </thead>
-          <tbody>
-            {mockConfig.poolAllocation.map((p) => (
-              <tr key={p.pool} className="border-b border-gray-800/50">
-                <td className="py-2 px-3 font-medium">{p.pool}</td>
-                <td className="py-2 px-3 text-right text-[#f0b429]">{p.bps}</td>
-                <td className="py-2 px-3 text-right text-gray-300">{p.percent}</td>
-                <td className="py-2 px-3 text-blue-400">{p.minVip}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <div className="space-y-3">
+          {mockConfig.poolAllocation.map((p) => (
+            <div key={p.pool} className="bg-gray-800/50 rounded-lg p-3">
+              <div className="flex justify-between items-center mb-1">
+                <span className="text-sm font-medium text-gray-200">{p.pool}</span>
+                <span className="text-sm text-[#f0b429] font-medium">{p.percent}</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <div className="text-gray-500">BPS: <span className="text-[#f0b429]">{p.bps}</span></div>
+                <div className="text-gray-500">最低等级: <span className="text-blue-400">{p.minVip}</span></div>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 
       {/* Tier Reward BPS */}
       <section className="bg-gray-900 border border-gray-800 rounded-xl p-6">
         <h3 className="text-lg font-semibold mb-4">层级奖励配置</h3>
-        <div className="overflow-x-auto">
-        <table className="w-full text-sm min-w-[500px]">
-          <thead>
-            <tr className="text-gray-500 border-b border-gray-800">
-              <th className="text-left py-2 px-3">等级</th>
-              <th className="text-right py-2 px-3">奖励 BPS</th>
-              <th className="text-right py-2 px-3">百分比</th>
-              <th className="text-right py-2 px-3">直推要求</th>
-              <th className="text-right py-2 px-3">社区节点要求</th>
-            </tr>
-          </thead>
-          <tbody>
-            {mockConfig.tierReward.map((t) => (
-              <tr key={t.tier} className="border-b border-gray-800/50">
-                <td className="py-2 px-3 font-medium">{t.tier}</td>
-                <td className="py-2 px-3 text-right text-[#f0b429]">{t.bps}</td>
-                <td className="py-2 px-3 text-right text-gray-300">{t.percent}</td>
-                <td className="py-2 px-3 text-right">{t.directReferrals}</td>
-                <td className="py-2 px-3 text-right">{t.communityNodes}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <div className="space-y-3">
+          {mockConfig.tierReward.map((t) => (
+            <div key={t.tier} className="bg-gray-800/50 rounded-lg p-3">
+              <div className="flex justify-between items-center mb-1">
+                <span className="text-sm font-medium text-gray-200">{t.tier}</span>
+                <span className="text-sm text-[#f0b429] font-medium">{t.percent} ({t.bps} BPS)</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <div className="text-gray-500">直推要求: <span className="text-gray-300">{t.directReferrals}</span></div>
+                <div className="text-gray-500">社区节点: <span className="text-gray-300">{t.communityNodes}</span></div>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 
       {/* Allowed Tokens */}
       <section className="bg-gray-900 border border-gray-800 rounded-xl p-6">
         <h3 className="text-lg font-semibold mb-4">允许的支付代币</h3>
-        <div className="overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="text-gray-500 border-b border-gray-800">
-              <th className="text-left py-2 px-3">链</th>
-              <th className="text-left py-2 px-3">代币</th>
-            </tr>
-          </thead>
-          <tbody>
-            {mockConfig.allowedTokens.map((chain) => (
-              <tr key={chain.chain} className="border-b border-gray-800/50">
-                <td className="py-2 px-3 font-medium">{chain.chain}</td>
-                <td className="py-2 px-3">
-                  <div className="flex gap-2">
-                    {chain.tokens.map((t) => (
-                      <span key={t} className="px-2 py-0.5 bg-gray-800 rounded text-xs text-gray-300">{t}</span>
-                    ))}
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <div className="space-y-3">
+          {mockConfig.allowedTokens.map((chain) => (
+            <div key={chain.chain} className="bg-gray-800/50 rounded-lg p-3">
+              <div className="text-sm font-medium text-gray-200 mb-2">{chain.chain}</div>
+              <div className="flex gap-2 flex-wrap">
+                {chain.tokens.map((t) => (
+                  <span key={t} className="px-2 py-0.5 bg-gray-800 rounded text-xs text-gray-300">{t}</span>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
       </section>
     </div>
