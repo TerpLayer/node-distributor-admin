@@ -29,7 +29,7 @@ export default function UsersPage() {
       <p className="text-sm text-gray-500">共 {mockUsers.length} 个用户</p>
 
       <div className="overflow-x-auto">
-        <table className="w-full text-sm">
+        <table className="w-full text-sm min-w-[700px]">
           <thead>
             <tr className="text-gray-500 border-b border-gray-800">
               <th className="text-left py-3 px-3">地址</th>

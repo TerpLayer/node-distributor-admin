@@ -26,7 +26,7 @@ function MetricCard({
     <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
       <p className="text-xs text-gray-500 mb-2">{label}</p>
       <p
-        className={`text-2xl font-bold ${accent ? "text-[#f0b429]" : color}`}
+        className={`text-xl md:text-2xl font-bold ${accent ? "text-[#f0b429]" : color}`}
       >
         {value}
       </p>
@@ -80,7 +80,7 @@ export default function DashboardPage() {
           {Object.entries(d.vipDistribution).map(([level, count]) => (
             <div key={level} className="bg-gray-900 border border-gray-800 rounded-xl p-5">
               <p className="text-xs text-gray-500 mb-2">{level}</p>
-              <p className={`text-2xl font-bold ${
+              <p className={`text-xl md:text-2xl font-bold ${
                 level === "VIP3" ? "text-[#f0b429]" :
                 level === "VIP2" ? "text-purple-400" :
                 level === "VIP1" ? "text-blue-400" :
@@ -98,7 +98,7 @@ export default function DashboardPage() {
           {Object.entries(d.poolBalances).map(([pool, balance]) => (
             <div key={pool} className="bg-gray-900 border border-gray-800 rounded-xl p-5">
               <p className="text-xs text-gray-500 mb-2">{pool} 奖励池</p>
-              <p className="text-2xl font-bold text-green-400">${balance.toLocaleString()}</p>
+              <p className="text-xl md:text-2xl font-bold text-green-400">${balance.toLocaleString()}</p>
             </div>
           ))}
         </div>

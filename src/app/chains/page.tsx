@@ -46,7 +46,7 @@ export default function ChainsPage() {
       <p className="text-sm text-gray-500">管理各链上的 NodeSale 合约部署</p>
 
       <div className="overflow-x-auto">
-        <table className="w-full text-sm">
+        <table className="w-full text-sm min-w-[600px]">
           <thead>
             <tr className="text-gray-500 border-b border-gray-800">
               <th className="text-left py-3 px-3">链名称</th>
@@ -67,7 +67,7 @@ export default function ChainsPage() {
                     {truncateAddress(chain.contract, 6)}
                   </td>
                   <td className="py-3 px-3">
-                    <div className="flex gap-1.5">
+                    <div className="flex gap-1.5 flex-wrap">
                       {chain.tokens.map((t) => (
                         <span key={t} className="px-2 py-0.5 bg-gray-800 rounded text-xs text-gray-300">{t}</span>
                       ))}

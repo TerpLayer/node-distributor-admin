@@ -34,7 +34,7 @@ export default function PoolsPage() {
                 <p className="text-lg font-semibold">{pool.id} 奖励池</p>
                 <span className="text-xs text-gray-500">最低 {pool.minVip}</span>
               </div>
-              <p className="text-2xl font-bold text-green-400">${pool.balance.toLocaleString()}</p>
+              <p className="text-xl md:text-2xl font-bold text-green-400">${pool.balance.toLocaleString()}</p>
               <p className="text-xs text-gray-500 mt-1">参与人数: {pool.participants}</p>
               <button className="mt-3 w-full px-4 py-2 bg-[#f0b429]/20 text-[#f0b429] hover:bg-[#f0b429]/30 rounded text-sm font-medium transition-colors">
                 手动结算
@@ -54,7 +54,7 @@ export default function PoolsPage() {
       <section>
         <h3 className="text-lg font-semibold text-gray-400 mb-3">结算历史</h3>
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm min-w-[500px]">
             <thead>
               <tr className="text-gray-500 border-b border-gray-800">
                 <th className="text-left py-2 px-3">日期</th>

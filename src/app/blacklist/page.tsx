@@ -52,7 +52,7 @@ export default function BlacklistPage() {
       {/* Add Address */}
       <section className="bg-gray-900 border border-gray-800 rounded-xl p-6">
         <h3 className="text-lg font-semibold mb-4">添加地址</h3>
-        <div className="flex items-end gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-end gap-4">
           <div className="flex-1">
             <label className="block text-xs text-gray-500 mb-1">钱包地址</label>
             <input
@@ -86,7 +86,7 @@ export default function BlacklistPage() {
           <p className="text-gray-500 text-sm">黑名单为空</p>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm min-w-[500px]">
               <thead>
                 <tr className="text-gray-500 border-b border-gray-800">
                   <th className="text-left py-2 px-3">地址</th>

@@ -34,7 +34,7 @@ export default function ConfigPage() {
       {/* Daily Limit */}
       <section className="bg-gray-900 border border-gray-800 rounded-xl p-6">
         <h3 className="text-lg font-semibold mb-4">每日限额</h3>
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-4">
           {editing ? (
             <>
               <input
@@ -83,7 +83,8 @@ export default function ConfigPage() {
       {/* Pool Allocation BPS */}
       <section className="bg-gray-900 border border-gray-800 rounded-xl p-6">
         <h3 className="text-lg font-semibold mb-4">奖励池分配比例</h3>
-        <table className="w-full text-sm">
+        <div className="overflow-x-auto">
+        <table className="w-full text-sm min-w-[400px]">
           <thead>
             <tr className="text-gray-500 border-b border-gray-800">
               <th className="text-left py-2 px-3">奖励池</th>
@@ -103,12 +104,14 @@ export default function ConfigPage() {
             ))}
           </tbody>
         </table>
+        </div>
       </section>
 
       {/* Tier Reward BPS */}
       <section className="bg-gray-900 border border-gray-800 rounded-xl p-6">
         <h3 className="text-lg font-semibold mb-4">层级奖励配置</h3>
-        <table className="w-full text-sm">
+        <div className="overflow-x-auto">
+        <table className="w-full text-sm min-w-[500px]">
           <thead>
             <tr className="text-gray-500 border-b border-gray-800">
               <th className="text-left py-2 px-3">等级</th>
@@ -130,11 +133,13 @@ export default function ConfigPage() {
             ))}
           </tbody>
         </table>
+        </div>
       </section>
 
       {/* Allowed Tokens */}
       <section className="bg-gray-900 border border-gray-800 rounded-xl p-6">
         <h3 className="text-lg font-semibold mb-4">允许的支付代币</h3>
+        <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="text-gray-500 border-b border-gray-800">
@@ -157,6 +162,7 @@ export default function ConfigPage() {
             ))}
           </tbody>
         </table>
+        </div>
       </section>
     </div>
   );
