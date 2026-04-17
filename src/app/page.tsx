@@ -1,19 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { publicClient, CONTRACT_ADDRESS, PAYMENT_TOKEN } from "@/lib/chain";
-import { nodeSaleAbi, erc20Abi } from "@/lib/abi";
-
-interface DashboardData {
-  dailyLimit: number;
-  dailySold: number;
-  paused: boolean;
-  poolBalances: { V1: number; V2: number; V3: number };
-  contractBalance: number;
-}
-
-const USDT_DECIMALS = 6;
-const fmtUsdt = (raw: bigint) => Number(raw) / 10 ** USDT_DECIMALS;
+const mockData = {
+  totalNodesSold: 1_842,
+  totalRevenue: 552_600,
+  activeUsers: 376,
+  dailySalesToday: 47,
+  dailyLimit: 100,
+  vipDistribution: { VIP0: 210, VIP1: 98, VIP2: 45, VIP3: 23 },
+  poolBalances: { V1: 28_500, V2: 15_200, V3: 8_900 },
+  pendingClaims: 12,
+};
 
 function MetricCard({
   label,
@@ -38,95 +34,29 @@ function MetricCard({
   );
 }
 
-async function fetchDashboard(): Promise<DashboardData> {
-  const contract = { address: CONTRACT_ADDRESS, abi: nodeSaleAbi } as const;
-
-  const [dailyLimit, currentDay, paused] = await Promise.all([
-    publicClient.readContract({ ...contract, functionName: "dailyLimit" }),
-    publicClient.readContract({ ...contract, functionName: "currentDay" }),
-    publicClient.readContract({ ...contract, functionName: "paused" }),
-  ]);
-
-  const dailySold = await publicClient.readContract({
-    ...contract, functionName: "dailySold", args: [currentDay as bigint],
-  });
-
-  const [poolV1, poolV2, poolV3] = await Promise.all([
-    publicClient.readContract({ ...contract, functionName: "tokenPoolBalances", args: [PAYMENT_TOKEN, 0n] }),
-    publicClient.readContract({ ...contract, functionName: "tokenPoolBalances", args: [PAYMENT_TOKEN, 1n] }),
-    publicClient.readContract({ ...contract, functionName: "tokenPoolBalances", args: [PAYMENT_TOKEN, 2n] }),
-  ]);
-
-  const contractBalance = await publicClient.readContract({
-    address: PAYMENT_TOKEN, abi: erc20Abi, functionName: "balanceOf", args: [CONTRACT_ADDRESS],
-  });
-
-  return {
-    dailyLimit: Number(dailyLimit),
-    dailySold: Number(dailySold),
-    paused: paused as boolean,
-    poolBalances: { V1: fmtUsdt(poolV1 as bigint), V2: fmtUsdt(poolV2 as bigint), V3: fmtUsdt(poolV3 as bigint) },
-    contractBalance: fmtUsdt(contractBalance as bigint),
-  };
-}
-
 export default function DashboardPage() {
-  const [data, setData] = useState<DashboardData | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetchDashboard().then(setData).catch((e) => setError(e.shortMessage || e.message));
-    const interval = setInterval(() => {
-      fetchDashboard().then(setData).catch(() => {});
-    }, 15000);
-    return () => clearInterval(interval);
-  }, []);
-
-  if (error) {
-    return (
-      <div className="space-y-4">
-        <h2 className="text-2xl font-bold">仪表板</h2>
-        <div className="bg-red-900/20 border border-red-800 rounded-xl p-6">
-          <p className="text-red-400 text-sm">合约读取失败: {error}</p>
-          <p className="text-xs text-gray-500 mt-2">请确认 Hardhat 节点已启动且合约已部署</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!data) {
-    return (
-      <div className="space-y-4">
-        <h2 className="text-2xl font-bold">仪表板</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[1,2,3,4].map(i => (
-            <div key={i} className="bg-gray-900 border border-gray-800 rounded-xl p-5 animate-pulse">
-              <div className="h-3 bg-gray-800 rounded w-20 mb-3" />
-              <div className="h-6 bg-gray-800 rounded w-16" />
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  const d = data;
+  const d = mockData;
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center gap-3">
-        <h2 className="text-2xl font-bold">仪表板</h2>
-        {d.paused && (
-          <span className="px-2 py-0.5 bg-red-900/50 text-red-400 rounded text-xs font-medium">合约已暂停</span>
-        )}
-        <span className="px-2 py-0.5 bg-green-900/30 text-green-500 rounded text-xs">链上实时</span>
-      </div>
+      <h2 className="text-2xl font-bold">仪表板</h2>
+
+      {/* Core Metrics */}
+      <section>
+        <h3 className="text-lg font-semibold text-gray-400 mb-3">核心指标</h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <MetricCard label="节点总销量" value={d.totalNodesSold.toLocaleString()} accent />
+          <MetricCard label="总收入 (USDT)" value={`$${d.totalRevenue.toLocaleString()}`} color="text-green-400" />
+          <MetricCard label="活跃用户" value={d.activeUsers} color="text-purple-400" />
+          <MetricCard label="待领取奖励" value={d.pendingClaims} color="text-orange-400" />
+        </div>
+      </section>
 
       {/* Daily Sales */}
       <section>
         <h3 className="text-lg font-semibold text-gray-400 mb-3">今日销售</h3>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          <MetricCard label="今日已售" value={d.dailySold} color="text-cyan-400" />
+          <MetricCard label="今日已售" value={d.dailySalesToday} color="text-cyan-400" />
           <MetricCard label="每日限额" value={d.dailyLimit} color="text-gray-300" />
           <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
             <p className="text-xs text-gray-500 mb-2">进度</p>
@@ -134,21 +64,30 @@ export default function DashboardPage() {
               <div className="w-full bg-gray-800 rounded-full h-3">
                 <div
                   className="bg-[#f0b429] h-3 rounded-full transition-all"
-                  style={{ width: `${d.dailyLimit > 0 ? Math.min(100, (d.dailySold / d.dailyLimit) * 100) : 0}%` }}
+                  style={{ width: `${Math.min(100, (d.dailySalesToday / d.dailyLimit) * 100)}%` }}
                 />
               </div>
-              <p className="text-xs text-gray-500 mt-1">{d.dailySold}/{d.dailyLimit}</p>
+              <p className="text-xs text-gray-500 mt-1">{d.dailySalesToday}/{d.dailyLimit}</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Contract Balance */}
+      {/* VIP Distribution */}
       <section>
-        <h3 className="text-lg font-semibold text-gray-400 mb-3">合约资金</h3>
-        <div className="grid grid-cols-2 gap-4">
-          <MetricCard label="合约 USDT 余额" value={`$${d.contractBalance.toLocaleString()}`} color="text-green-400" />
-          <MetricCard label="奖池总额" value={`$${(d.poolBalances.V1 + d.poolBalances.V2 + d.poolBalances.V3).toLocaleString()}`} accent />
+        <h3 className="text-lg font-semibold text-gray-400 mb-3">VIP 分布</h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {Object.entries(d.vipDistribution).map(([level, count]) => (
+            <div key={level} className="bg-gray-900 border border-gray-800 rounded-xl p-5">
+              <p className="text-xs text-gray-500 mb-2">{level}</p>
+              <p className={`text-xl md:text-2xl font-bold ${
+                level === "VIP3" ? "text-[#f0b429]" :
+                level === "VIP2" ? "text-purple-400" :
+                level === "VIP1" ? "text-blue-400" :
+                "text-gray-400"
+              }`}>{count}</p>
+            </div>
+          ))}
         </div>
       </section>
 

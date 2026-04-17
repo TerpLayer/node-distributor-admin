@@ -1,6 +1,5 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { EXPLORER_URL, getChainConfig } from "./chain";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -19,12 +18,12 @@ export function formatUSDC(amount: bigint | string | number, decimals = 6): stri
   return `${whole}.${frac.toString().padStart(decimals, "0").slice(0, 2)}`;
 }
 
-export function explorerTxUrl(txHash: string, chainId?: number): string {
-  const base = chainId ? getChainConfig(chainId).explorerUrl : EXPLORER_URL;
+export function explorerTxUrl(txHash: string): string {
+  const base = process.env.NEXT_PUBLIC_EXPLORER_URL || "https://testnet.berascan.com";
   return `${base}/tx/${txHash}`;
 }
 
-export function explorerAddressUrl(address: string, chainId?: number): string {
-  const base = chainId ? getChainConfig(chainId).explorerUrl : EXPLORER_URL;
+export function explorerAddressUrl(address: string): string {
+  const base = process.env.NEXT_PUBLIC_EXPLORER_URL || "https://testnet.berascan.com";
   return `${base}/address/${address}`;
 }
