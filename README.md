@@ -95,26 +95,6 @@ npm run dev  # 端口 3003
 
 访问 http://localhost:3003
 
-### 5. 本地一键恢复
-
-如果你使用的是本地 Hardhat 链开发环境，推荐直接运行：
-
-```bash
-npm run dev:local
-```
-
-它会自动执行以下动作：
-
-1. 检查 `http://127.0.0.1:8545` 是否有 Hardhat 节点
-2. 若没有，则后台启动本地 Hardhat 节点
-3. 重新部署本地 `NodeSale + MockUSDT`
-4. 启动管理后台开发服务器（3003）
-
-相关日志文件：
-
-- Hardhat 节点日志：`/tmp/node-store-hardhat.log`
-- 本地部署日志：`/tmp/node-store-deploy.log`
-
 ## 与主项目的关系
 
 - **数据库共享**：连接 `nw_nf` 主项目的 PostgreSQL，Prisma schema 与主项目同步
