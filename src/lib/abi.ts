@@ -20,9 +20,36 @@ export const nodeSaleAbi = [
     outputs: [{ name: "", type: "uint8" }],
   },
   {
-    type: "function", name: "poolBalances", stateMutability: "view",
-    inputs: [{ name: "poolId", type: "uint8" }],
+    type: "function", name: "tokenPoolBalances", stateMutability: "view",
+    inputs: [{ name: "token", type: "address" }, { name: "poolId", type: "uint256" }],
     outputs: [{ name: "", type: "uint256" }],
+  },
+  {
+    type: "function", name: "poolAllocBps", stateMutability: "view",
+    inputs: [{ name: "poolId", type: "uint256" }],
+    outputs: [{ name: "", type: "uint256" }],
+  },
+  {
+    type: "function", name: "tierRewardBps", stateMutability: "view",
+    inputs: [{ name: "vipLevel", type: "uint256" }],
+    outputs: [{ name: "", type: "uint256" }],
+  },
+  {
+    type: "function", name: "paused", stateMutability: "view",
+    inputs: [], outputs: [{ name: "", type: "bool" }],
+  },
+  {
+    type: "function", name: "NODE_PRICE", stateMutability: "view",
+    inputs: [], outputs: [{ name: "", type: "uint256" }],
+  },
+  {
+    type: "function", name: "REFERRAL_REWARD_BPS", stateMutability: "view",
+    inputs: [], outputs: [{ name: "", type: "uint256" }],
+  },
+  {
+    type: "function", name: "hasReferrer", stateMutability: "view",
+    inputs: [{ name: "user", type: "address" }],
+    outputs: [{ name: "", type: "bool" }],
   },
   {
     type: "function", name: "claimableTierReward", stateMutability: "view",
@@ -90,6 +117,15 @@ export const nodeSaleAbi = [
       { name: "requiredCommunityNodes", type: "uint256" },
     ],
   },
+  {
+    type: "function", name: "setPlatformWallet", stateMutability: "nonpayable",
+    inputs: [{ name: "wallet", type: "address" }],
+    outputs: [],
+  },
+  {
+    type: "function", name: "dailyRemaining", stateMutability: "view",
+    inputs: [], outputs: [{ name: "", type: "uint256" }],
+  },
 
   // ── Write functions (admin only) ──
   {
@@ -109,21 +145,12 @@ export const nodeSaleAbi = [
   },
   {
     type: "function", name: "setPoolConfig", stateMutability: "nonpayable",
-    inputs: [
-      { name: "poolId", type: "uint8" },
-      { name: "bps", type: "uint256" },
-      { name: "minVipLevel", type: "uint8" },
-    ],
+    inputs: [{ name: "allocBps", type: "uint256[3]" }],
     outputs: [],
   },
   {
-    type: "function", name: "setTierConfig", stateMutability: "nonpayable",
-    inputs: [
-      { name: "vipLevel", type: "uint8" },
-      { name: "rewardBps", type: "uint256" },
-      { name: "requiredDirectReferrals", type: "uint256" },
-      { name: "requiredCommunityNodes", type: "uint256" },
-    ],
+    type: "function", name: "setTierRewardConfig", stateMutability: "nonpayable",
+    inputs: [{ name: "rewardBps", type: "uint256[4]" }],
     outputs: [],
   },
   {
